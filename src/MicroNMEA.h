@@ -47,7 +47,7 @@ public:
 	// longitude will be set to 999 degrees.
 	void clear(void);
 		
-	float parseDegreeMinuteToFloat(const char* s, uint8_t degWidth)
+	float parseDegreeMinuteToFloat(const char* s, uint8_t degWidth);
 
 	// Navigation system, N=GNSS, P=GPS, L=GLONASS, A=Galileo, '\0'=none
 	char getNavSystem(void) const {

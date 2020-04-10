@@ -1,6 +1,7 @@
-#include <MicroNMEA.h>
+#include "./MicroNMEA.h" //use this forked version, not the global install
 
 // Allow debugging/regression testing under normal g++ environment.
+#undef MICRONMEA_DEBUG
 #ifdef MICRONMEA_DEBUG
 #include <stdlib.h>
 #include <iostream>
@@ -101,19 +102,19 @@ float MicroNMEA::parseDegreeMinuteToFloat(const char* s, uint8_t degWidth)
 		return 0.0f;
 	}
 	int8_t i = 1; // assume two digits of minutes before the decimal point
-	char *s_copy = s;
+	const char *s_copy = s;
 	float cumulative_value = 0.0f;
 	while (isspace(*s_copy))
 		++s_copy;
 	cumulative_value += (float)parseUnsignedInt(s_copy, degWidth);
 	s_copy += degWidth;
 	int8_t digit = 0;
-	while (isdigit(*(s_copy)) || (*(s_copy) == '.')
+	while (isdigit(*(s_copy)) || (*(s_copy) == '.'))
 	{
 		if (*(s_copy) != '.')
 		{
 			digit = *(s_copy) - '0';
-			cumulative_value += (float)digit * pow(10.0f,(float)i);
+			cumulative_value += (float)digit * pow(10.0f,(float)i) / 60.0f;
 			--i;
 		}
 		++s_copy;

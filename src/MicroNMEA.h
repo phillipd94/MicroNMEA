@@ -46,6 +46,8 @@ public:
 	// LONG_MIN; the altitude validity flag will be false. Latitude and
 	// longitude will be set to 999 degrees.
 	void clear(void);
+		
+	float parseDegreeMinuteToFloat(const char* s, uint8_t degWidth)
 
 	// Navigation system, N=GNSS, P=GPS, L=GLONASS, A=Galileo, '\0'=none
 	char getNavSystem(void) const {
@@ -74,6 +76,16 @@ public:
 	// Longitude in millionths of a degree. East is positive.
 	long getLongitude(void) const {
 		return _longitude;
+	}
+	
+		// Latitude in millionths of a degree. North is positive.
+	float getFloatLatitude(void) const {
+		return _flatitude;
+	}
+
+	// Longitude in millionths of a degree. East is positive.
+	float getFloatLongitude(void) const {
+		return _flongitude;
 	}
 
 	// Altitude in millimetres.
@@ -172,6 +184,7 @@ private:
 	char _navSystem;
 	bool _isValid;
 	long _latitude, _longitude; // In millionths of a degree
+	float _flatitude, _flongitude; // Float approximations
 	long _altitude; // In millimetres
 	bool _altitudeValid;
 	long _speed, _course;

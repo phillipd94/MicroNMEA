@@ -90,6 +90,36 @@ long MicroNMEA::parseFloat(const char* s, uint8_t log10Multiplier, const char** 
 	return r;
 }
 
+float MicroNMEA::parseDegreeMinuteToFloat(const char* s, uint8_t degWidth) 
+//This function is to extract degrees and minutes as a float without progressing the pointer.  
+//Teensy 3.6 has hardware float operations, so this shouldn't be too expensive in our application.
+//There is probably another way to do this that aligns better with the library philosophy.  
+//If there's ever time, we should look into that
+{
+	if (*s == ',') 
+	{
+		return 0.0f;
+	}
+	int8_t i = 1; // assume two digits of minutes before the decimal point
+	char *s_copy = s;
+	float cumulative_value = 0.0f;
+	while (isspace(*s_copy))
+		++s_copy;
+	cumulative_value += (float)parseUnsignedInt(s_copy, degWidth);
+	s_copy += degWidth;
+	int8_t digit = 0;
+	while (isdigit(*(s_copy)) || (*(s_copy) == '.')
+	{
+		if (*(s_copy) != '.')
+		{
+			digit = *(s_copy) - '0';
+			cumulative_value += (float)digit * pow(10.0f,(float)i);
+			--i;
+		}
+		++s_copy;
+	}
+	return cumulative_value;
+}
 
 long MicroNMEA::parseDegreeMinute(const char* s, uint8_t degWidth,
 								  const char **eptr)
@@ -294,6 +324,7 @@ bool MicroNMEA::processGGA(const char *s)
 
 	s = parseTime(s);
 	// ++s;
+	_flatitude = parseDegreeMinuteToFloat(s, 2);
 	_latitude = parseDegreeMinute(s, 2, &s);
 	if (*s == ',')
 		++s;
@@ -302,6 +333,7 @@ bool MicroNMEA::processGGA(const char *s)
 			_latitude *= -1;
 		s += 2; // Skip N/S and comma
 	}
+	_flongitude = parseDegreeMinuteToFloat(s, 3);
 	_longitude = parseDegreeMinute(s, 3, &s);
 	if (*s == ',')
 		++s;
@@ -331,6 +363,7 @@ bool MicroNMEA::processRMC(const char* s)
 	s = parseTime(s);
 	_isValid = (*s == 'A');
 	s += 2; // Skip validity and comma
+	_flatitude = parseDegreeMinuteToFloat(s, 2);
 	_latitude = parseDegreeMinute(s, 2, &s);
 	if (*s == ',')
 		++s;
@@ -339,6 +372,7 @@ bool MicroNMEA::processRMC(const char* s)
 			_latitude *= -1;
 		s += 2; // Skip N/S and comma
 	}
+	_flongitude = parseDegreeMinuteToFloat(s, 3);
 	_longitude = parseDegreeMinute(s, 3, &s);
 	if (*s == ',')
 		++s;

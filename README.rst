@@ -1,3 +1,9 @@
+This Fork of MicroNMEA
+=========
+This repository is a fork of the amazing MicroNMEA library.  For my application I am working with an extremely precise GNSS unit that delivers extra significant digits in the NMEA strings.  Additionally, my cohorts have requested that I make a floating point approximation of lat/long available, as our processor has a FPU and floating point operations are not a deal breaker for our performance.  As these requirements are specific to my application and aren't general improvements, I have chosen to maintain them as a fork rather than contribute to the original library.
+
+I've preserved the original README below:
+
 MicroNMEA
 =========
 
